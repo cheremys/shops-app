@@ -70,8 +70,16 @@ namespace ShopAppBll.Services
 
         public IEnumerable<ShopDTO> GetShops()
         {
-            var mapper = new MapperConfiguration(cfg => cfg.CreateMap<Shop, ShopDTO>()).CreateMapper();
-            return mapper.Map<IEnumerable<Shop>, List<ShopDTO>>(Database.Shops.GetAll());
+            var config = new MapperConfiguration(cfg => {
+                cfg.CreateMap<Shop, ShopDTO>();
+                cfg.CreateMap<SalesConsultant, SalesConsultantDTO>();
+            });
+            config.AssertConfigurationIsValid();
+
+            var shops = Database.Shops.GetAll();
+
+            var mapper = config.CreateMapper();
+            return mapper.Map<IEnumerable<Shop>, List<ShopDTO>>(shops);
         }
 
         public void Dispose()
